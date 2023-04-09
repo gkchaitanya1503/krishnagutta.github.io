@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Your Name - Portfolio</title>
+    <link href="styles.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+    <meta name="description" content="A portfolio website showcasing my skills and experience as a Workday Integration Consultant.">
+    <meta name="keywords" content="Workday Integration Consultant, Human Capital Management, Resume, Portfolio">
+
+</head>
+<body>
+<header>
+    <nav>
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#resume">Resume</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+</header>
+<main>
+    <section id="about">
+        <h1>About Me</h1>
+        <img alt="Krishna Gutta" height="200" src="profile_picture.jpg" width="200">
+        <p>Hello! My name is Krishna Gutta, and I am a Lead Systems Engineer, Workday. Experienced IT professional with
+            expertise in Workday's Human Capital Management, Recruitment, Payroll, and Benefits modules. Skilled in
+            developing and maintaining integration systems using Studio, PRISM, and Extend applications. Proven ability
+            to deliver cost-effective and high-performance technology solutions. Strategic leader with cross-functional
+            team management skills and strong relationship building abilities. In my free time, I enjoy playing
+            chess.</p>
+    </section>
+
+    <section class="container" id="projects">
+        <h1>Projects</h1>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-12" data-aos="fade-up">
+                <div class="card">
+                    <img src="project1.jpg" class="card-img-top" alt="Project 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Lyft INC</h5>
+                        <p class="card-text">Project 1 description.</p>
+                        <a href="https://example.com/project1" class="btn btn-primary">View Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add more project cards here -->
+
+        </div>
+
+        <!-- Add more projects as needed -->
+    </section>
+
+    <section class="container" id="resume">
+        <h1 class="display-4">Resume</h1>
+        <h2 class="h3">Workday Integration Consultant</h2>
+        <h3 class="h4">Qualifications Profile</h3>
+        <p class="lead">
+            Experienced IT professional with expertise in Workday's Human Capital Management, Recruitment, Payroll, and
+            Benefits modules. Skilled in developing and maintaining integration systems using Studio, PRISM, and Extend
+            applications. Proven ability to deliver cost-effective and high-performance technology solutions. Strategic
+            leader with cross-functional team management skills and strong relationship building abilities.
+        </p>
+
+        <h3 class="h4">Areas of Expertise</h3>
+        <ul class="list-unstyled">
+            <li>Human Resource Management</li>
+            <li>Recruiting</li>
+            <li>Workday Studio</li>
+            <li>Greenhouse</li>
+            <li>EIB and Document Transformation</li>
+            <li>PRISM</li>
+            <li>Workday EXTEND</li>
+            <li>Docebo</li>
+        </ul>
+
+        <!-- Add the rest of your resume content here using similar HTML structure -->
+
+        <h3>Education</h3>
+        <p>
+            Master of Science in Electrical Engineering: 2014<br>
+            Texas A&M University—Kingsville, Kingsville, TX, USA
+        </p>
+        <p>
+            Bachelor of Engineering in Electronics and Communication Engineering: 2013<br>
+            KL University, India
+        </p>
+    </section>
+
+    <section id="contact">
+        <h1>Contact</h1>
+        <p>Email: your.email@example.com</p>
+        <p>Phone: +1 (555) 123-4567</p>
+        <p>
+            <a href="https://www.linkedin.com/in/yourusername" target="_blank">LinkedIn</a> |
+            <a href="https://github.com/yourusername" target="_blank">GitHub</a> |
+            <a href="https://twitter.com/yourusername" target="_blank">Twitter</a>
+        </p>
+    </section>
+
+</main>
+<footer>
+    &copy; Krishna Gutta 2023. All rights reserved.
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('a[href*="#"]:not([href="#"])').click(function() {
+      if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+        var target = $(this.hash);
+        target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+        if (target.length) {
+          $('html, body').animate({
+            scrollTop: target.offset().top
+          }, 1000);
+          return false;
+        }
+      }
+    });
+  });
+</script>
+<script>
+  AOS.init();
+</script>
+
+</body>
+</html>
