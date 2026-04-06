@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Ops Dashboard - Krishna Gutta</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #22223a;
+            --accent-green: #00e676;
+            --accent-blue: #448aff;
+            --accent-purple: #7c4dff;
+            --accent-orange: #ff9100;
+            --accent-pink: #ff4081;
+            --accent-cyan: #18ffff;
+            --text-primary: #e0e0e0;
+            --text-secondary: #9e9e9e;
+            --border-color: #2a2a3e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Top nav bar */
+        .top-bar {
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .top-bar .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .top-bar .back-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Status bar */
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem 2rem;
+            flex-wrap: wrap;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.green { background: var(--accent-green); }
+        .status-dot.blue { background: var(--accent-blue); }
+        .status-dot.orange { background: var(--accent-orange); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Dashboard grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem 2rem 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Ops cards */
+        .ops-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.8rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ops-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .ops-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .ops-card.health::before { background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan)); }
+        .ops-card.grocery::before { background: linear-gradient(90deg, var(--accent-orange), #ffca28); }
+        .ops-card.food::before { background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple)); }
+        .ops-card.fitness::before { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+        .ops-card.kids::before { background: linear-gradient(90deg, #ffca28, var(--accent-orange)); }
+        .ops-card.home::before { background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink)); }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .card-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-active { background: rgba(0, 230, 118, 0.15); color: var(--accent-green); }
+        .badge-planned { background: rgba(124, 77, 255, 0.15); color: var(--accent-purple); }
+        .badge-idea { background: rgba(255, 145, 0, 0.15); color: var(--accent-orange); }
+
+        .ops-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .ops-card .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.2rem;
+        }
+
+        /* Features list inside cards */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-list li:last-child { border-bottom: none; }
+
+        .feature-list li i {
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .feature-list li i.fa-check-circle { color: var(--accent-green); }
+        .feature-list li i.fa-clock { color: var(--accent-orange); }
+        .feature-list li i.fa-lightbulb { color: #ffca28; }
+
+        /* Mini stats row */
+        .stats-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stat .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .stat .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tech stack footer */
+        .tech-stack {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 2rem;
+        }
+
+        .tech-stack h4 {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .tech-tags {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tech-tag {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .tech-tag:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .dashboard { grid-template-columns: 1fr; padding: 1rem; }
+            .status-bar { gap: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <span class="logo">Life Ops</span>
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Portfolio</a>
+</div>
+
+<div class="hero">
+    <h1>Life Ops Dashboard</h1>
+    <p>Personal automation systems for health, food, fitness, and family — because life deserves good engineering too.</p>
+</div>
+
+<div class="status-bar">
+    <div class="status-pill">
+        <span class="status-dot green"></span>
+        <span>3 Automations Active</span>
+    </div>
+    <div class="status-pill">
+        <span class="status-dot blue"></span>
+        <span>2 In Development</span>
+    </div>
+    <div class="status-pill">
+        <span class="status-dot orange"></span>
+        <span>3 Ideas Queued</span>
+    </div>
+</div>
+
+<div class="dashboard">
+
+    <!-- HealthOps -->
+    <div class="ops-card health">
+        <div class="card-header-row">
+            <div>
+                <div class="card-icon">&#129657;</div>
+                <h3>HealthOps</h3>
+            </div>
+            <span class="card-badge badge-planned">Planned</span>
+        </div>
+        <p class="subtitle">Garmin-connected health intelligence</p>
+        <ul class="feature-list">
+            <li><i class="fas fa-clock"></i> Sync sleep quality & activity data from Garmin</li>
+            <li><i class="fas fa-clock"></i> Smart nudges: meditate, exercise, or rest</li>
+            <li><i class="fas fa-lightbulb"></i> Weekly health trend summaries</li>
+            <li><i class="fas fa-lightbulb"></i> Correlate sleep patterns with productivity</li>
+        </ul>
+        <div class="stats-row">
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-green);">--</div>
+                <div class="stat-label">Sleep Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-cyan);">--</div>
+                <div class="stat-label">Steps Today</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-blue);">--</div>
+                <div class="stat-label">Streak</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FitnessOps -->
+    <div class="ops-card fitness">
+        <div class="card-header-row">
+            <div>
+                <div class="card-icon">&#127947;</div>
+                <h3>FitnessOps</h3>
+            </div>
+            <span class="card-badge badge-active">Active</span>
+        </div>
+        <p class="subtitle">Gym accountability & workout recommendations</p>
+        <ul class="feature-list">
+            <li><i class="fas fa-check-circle"></i> Morning gym reminders via WhatsApp</li>
+            <li><i class="fas fa-check-circle"></i> Track gym attendance (went / skipped)</li>
+            <li><i class="fas fa-check-circle"></i> Recommend workouts based on schedule</li>
+            <li><i class="fas fa-lightbulb"></i> Progressive overload tracking</li>
+        </ul>
+        <div class="stats-row">
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-blue);">5</div>
+                <div class="stat-label">This Week</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-cyan);">85%</div>
+                <div class="stat-label">Consistency</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-green);">12d</div>
+                <div class="stat-label">Streak</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FoodOps -->
+    <div class="ops-card food">
+        <div class="card-header-row">
+            <div>
+                <div class="card-icon">&#127837;</div>
+                <h3>FoodOps</h3>
+            </div>
+            <span class="card-badge badge-active">Active</span>
+        </div>
+        <p class="subtitle">Smart meal ordering with budget controls</p>
+        <ul class="feature-list">
+            <li><i class="fas fa-check-circle"></i> Browse DoorDash menus via chat</li>
+            <li><i class="fas fa-check-circle"></i> Budget cap: meals under $40 for 2</li>
+            <li><i class="fas fa-check-circle"></i> Gift card spend control</li>
+            <li><i class="fas fa-clock"></i> Scheduled Wednesday dinner orders</li>
+        </ul>
+        <div class="stats-row">
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-pink);">$32</div>
+                <div class="stat-label">Avg Order</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-purple);">Wed</div>
+                <div class="stat-label">Next Order</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-orange);">$78</div>
+                <div class="stat-label">Saved/mo</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GroceryOps -->
+    <div class="ops-card grocery">
+        <div class="card-header-row">
+            <div>
+                <div class="card-icon">&#128722;</div>
+                <h3>GroceryOps</h3>
+            </div>
+            <span class="card-badge badge-planned">Planned</span>
+        </div>
+        <p class="subtitle">Rolling grocery list with auto-ordering</p>
+        <ul class="feature-list">
+            <li><i class="fas fa-clock"></i> Add items on the go via chat</li>
+            <li><i class="fas fa-clock"></i> Auto-order when list crosses $50</li>
+            <li><i class="fas fa-lightbulb"></i> Free delivery optimization ($50+ threshold)</li>
+            <li><i class="fas fa-lightbulb"></i> Recurring staples auto-added weekly</li>
+        </ul>
+        <div class="stats-row">
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-orange);">$0</div>
+                <div class="stat-label">Cart Total</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: #ffca28;">0</div>
+                <div class="stat-label">Items</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-green);">$50</div>
+                <div class="stat-label">Threshold</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ChildrenOps -->
+    <div class="ops-card kids">
+        <div class="card-header-row">
+            <div>
+                <div class="card-icon">&#128103;</div>
+                <h3>ChildrenOps</h3>
+            </div>
+            <span class="card-badge badge-idea">Idea</span>
+        </div>
+        <p class="subtitle">Activities, stories & food ideas for kids</p>
+        <ul class="feature-list">
+            <li><i class="fas fa-lightbulb"></i> Age-appropriate activity suggestions</li>
+            <li><i class="fas fa-lightbulb"></i> Bedtime story generator</li>
+            <li><i class="fas fa-lightbulb"></i> Kid-friendly meal ideas & nutrition</li>
+            <li><i class="fas fa-lightbulb"></i> Weekend outing recommendations</li>
+        </ul>
+        <div class="stats-row">
+            <div class="stat">
+                <div class="stat-value" style="color: #ffca28;">--</div>
+                <div class="stat-label">Activities</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-orange);">--</div>
+                <div class="stat-label">Stories</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-pink);">--</div>
+                <div class="stat-label">Recipes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HomeOps -->
+    <div class="ops-card home">
+        <div class="card-header-row">
+            <div>
+                <div class="card-icon">&#127968;</div>
+                <h3>HomeOps</h3>
+            </div>
+            <span class="card-badge badge-idea">Idea</span>
+        </div>
+        <p class="subtitle">App installs & home server management</p>
+        <ul class="feature-list">
+            <li><i class="fas fa-check-circle"></i> Install apps via WhatsApp command</li>
+            <li><i class="fas fa-lightbulb"></i> Auto-discover GitHub projects to try</li>
+            <li><i class="fas fa-lightbulb"></i> Server health monitoring</li>
+            <li><i class="fas fa-lightbulb"></i> Scheduled backups & updates</li>
+        </ul>
+        <div class="stats-row">
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-purple);">6</div>
+                <div class="stat-label">Apps</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-pink);">99%</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: var(--accent-cyan);">Linux</div>
+                <div class="stat-label">OS</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Architecture section -->
+<div class="tech-stack">
+    <h4>Powered By</h4>
+    <div class="tech-tags">
+        <span class="tech-tag">Linux Server</span>
+        <span class="tech-tag">OpenClaw</span>
+        <span class="tech-tag">WhatsApp Bot</span>
+        <span class="tech-tag">Garmin API</span>
+        <span class="tech-tag">DoorDash</span>
+        <span class="tech-tag">DeepSeek API</span>
+        <span class="tech-tag">GitHub Actions</span>
+        <span class="tech-tag">PRISM Analytics</span>
+        <span class="tech-tag">Cron Jobs</span>
+    </div>
+</div>
+
+</body>
+</html>
