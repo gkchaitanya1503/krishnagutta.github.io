@@ -1,0 +1,33 @@
+{
+  "name": "workday-mcp-server",
+  "version": "1.0.0",
+  "description": "A generic MCP Server for Workday REST API integration with OAuth 2.0 authentication",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "workday-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc -w",
+    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "workday",
+    "oauth",
+    "hcm",
+    "api",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "dotenv": "^16.5.0",
+    "zod": "^3.25.0"
+  }
+}
