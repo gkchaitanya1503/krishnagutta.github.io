@@ -1,0 +1,18 @@
+{
+  "name": "workday-mcp",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "forwardPorts": [4000],
+  "portsAttributes": {
+    "4000": {
+      "label": "Workday MCP",
+      "onAutoForward": "silent",
+      "visibility": "public"
+    }
+  },
+  "postStartCommand": "npm install --silent && npm list -g pm2 --depth=0 2>/dev/null || npm install -g pm2 && mkdir -p logs && pm2 describe workday-mcp > /dev/null 2>&1 && pm2 restart workday-mcp || pm2 start ecosystem.config.cjs && gh codespace ports visibility 4000:public -c $CODESPACE_NAME 2>/dev/null || true",
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint"]
+    }
+  }
+}
