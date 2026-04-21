@@ -1,0 +1,21 @@
+# Code owners for this repository.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Any PR that modifies files under these paths will automatically
+# request a review from the listed owners.
+
+# Default owner for everything
+*                         @gkchaitanya1503
+
+# Auth-critical paths — extra scrutiny
+/server.mjs               @gkchaitanya1503
+/mcp-server.mjs           @gkchaitanya1503
+/poc.js                   @gkchaitanya1503
+
+# Config + deployment
+/.github/                 @gkchaitanya1503
+/.devcontainer/           @gkchaitanya1503
+/ecosystem.config.cjs     @gkchaitanya1503
+
+# Docs
+*.md                      @gkchaitanya1503

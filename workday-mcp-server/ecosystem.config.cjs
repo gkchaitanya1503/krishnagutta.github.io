@@ -10,8 +10,8 @@ module.exports = {
       restart_delay: 3000,
       env: {
         NODE_ENV: 'production',
-        PORT: process.env.PORT ?? 4000,
-        ADMIN_KEY: process.env.ADMIN_KEY ?? 'change-this-to-a-secret',
+        PORT: 4000,
+        ADMIN_KEY: process.env.ADMIN_KEY ?? 'workday-admin',
       },
       log_date_format: 'YYYY-MM-DD HH:mm:ss',
       out_file: './logs/server-out.log',

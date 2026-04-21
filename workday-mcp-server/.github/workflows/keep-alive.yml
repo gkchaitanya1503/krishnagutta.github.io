@@ -1,0 +1,54 @@
+name: Codespace Keep-Alive
+
+# Pings the Workday MCP server health endpoint every 5 minutes to prevent
+# the GitHub Codespace from sleeping during active use.
+#
+# Setup: add a repository variable CODESPACE_HEALTH_URL pointing to your
+# Codespace health endpoint, e.g.
+#   https://my-codespace-4000.app.github.dev/health
+#
+# Enable/disable by going to Actions → Keep-Alive → Enable/Disable workflow.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # every 5 minutes (UTC)
+  workflow_dispatch:          # manual trigger from Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Check health URL is configured
+        env:
+          URL: ${{ vars.CODESPACE_HEALTH_URL }}
+        run: |
+          if [ -z "$URL" ]; then
+            echo "::warning::CODESPACE_HEALTH_URL repository variable is not set — skipping ping."
+            echo "   Configure under: Settings → Secrets and variables → Actions → Variables"
+            exit 0
+          fi
+
+      - name: Ping Codespace health endpoint
+        env:
+          URL: ${{ vars.CODESPACE_HEALTH_URL }}
+        run: |
+          [ -z "$URL" ] && exit 0
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "$URL" \
+            --max-time 10 \
+            --retry 2 \
+            --retry-delay 3 \
+            || echo "000")
+
+          echo "Health check status: $STATUS"
+
+          if [ "$STATUS" = "200" ]; then
+            echo "✅ Codespace is alive"
+          elif [ "$STATUS" = "000" ]; then
+            echo "⚠️  Codespace unreachable (connection timeout) — it may have stopped"
+            echo "   To restart: open the Codespace and run: npm run reload"
+          else
+            echo "⚠️  Unexpected status $STATUS — Codespace may be starting up"
+          fi

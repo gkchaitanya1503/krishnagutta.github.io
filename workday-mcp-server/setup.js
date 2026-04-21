@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
- * Workday MCP Server — One-time setup for teammates
+ * Workday MCP Server — One-time setup for end users
  *
- * Run this script to connect Claude Desktop to the Workday MCP server:
+ * Connects Claude Desktop to a running Workday MCP relay:
  *   node setup.js
  *
  * What it does:
  *   1. Installs dependencies (npm install)
- *   2. Asks for the Codespace URL
- *   3. Asks for Workday tenant details
- *   4. Adds workday to your Claude Desktop config
- *   5. Done — restart Claude Desktop and ask it to authenticate with Workday
+ *   2. Asks for the Codespace relay URL (from your admin)
+ *   3. Asks for your Workday tenant details (from your admin)
+ *   4. Adds "workday" to your Claude Desktop config
+ *   5. Done — restart Claude Desktop and call authenticate_workday
  */
 
 const fs   = require('fs');
@@ -56,18 +56,26 @@ async function main() {
     process.exit(1);
   }
 
-  // 3 — Get Codespace URL
-  console.log('You need the Codespace URL from your Workday MCP admin.');
-  console.log('It looks like: https://NAME-4000.app.github.dev\n');
+  // 3 — Collect config (ask admin for these)
+  console.log('Ask your Workday admin for the following values:\n');
 
-  let pocUrl = (await ask('Paste the Codespace URL: ')).trim().replace(/\/$/, '');
-
+  let pocUrl = (await ask('Codespace relay URL (e.g. https://my-codespace-4000.app.github.dev): ')).trim().replace(/\/$/, '');
   if (!pocUrl.startsWith('https://')) {
     console.error('\n✗ Must be an https:// URL');
     process.exit(1);
   }
 
-  // Quick connectivity check
+  const tenantId = (await ask('Workday Tenant ID (e.g. acme_corp1): ')).trim();
+  if (!tenantId) {
+    console.error('\n✗ Tenant ID required');
+    process.exit(1);
+  }
+
+  const defaultBase = 'https://wd5-impl-services1.workday.com';
+  const baseInput = (await ask(`Workday Base URL [${defaultBase}]: `)).trim();
+  const baseUrl = baseInput || defaultBase;
+
+  // 4 — Connectivity check
   process.stdout.write('\n→ Checking connection to Codespace... ');
   try {
     const https = require('https');
@@ -84,22 +92,13 @@ async function main() {
     if (cont !== 'y') { rl.close(); process.exit(0); }
   }
 
-  // 4 — Get tenant details
-  console.log('');
-  const tenantId = (await ask('Workday Tenant ID (e.g. "acme_corp1"): ')).trim();
-  const baseUrl  = (await ask('Workday Base URL (e.g. "https://wd5-impl-services1.workday.com"): ')).trim().replace(/\/$/, '');
-
-  if (!tenantId || !baseUrl) {
-    console.error('\n✗ Tenant ID and Base URL are required');
-    process.exit(1);
-  }
-
   // 5 — Update Claude Desktop config
   const raw    = fs.readFileSync(CLAUDE_CONFIG, 'utf8');
   const config = JSON.parse(raw);
   config.mcpServers = config.mcpServers || {};
 
-  const isUpdate = !!config.mcpServers['workday'];
+  const existing = config.mcpServers['workday'];
+  const isUpdate = !!existing;
 
   config.mcpServers['workday'] = {
     command: 'node',
@@ -111,20 +110,21 @@ async function main() {
     },
   };
 
-  // Backup first
   fs.writeFileSync(`${CLAUDE_CONFIG}.bak`, raw);
   fs.writeFileSync(CLAUDE_CONFIG, JSON.stringify(config, null, 2));
 
   // 6 — Done
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log(`  ✓ ${isUpdate ? 'Updated' : 'Added'} workday in Claude Desktop`);
+  console.log(`  ✓ ${isUpdate ? 'Updated' : 'Added'} "workday" in Claude Desktop`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log(`  Config : ${CLAUDE_CONFIG}`);
-  console.log(`  Server : ${SERVER_PATH}`);
-  console.log(`  POC URL: ${pocUrl}`);
-  console.log(`  Tenant : ${tenantId}`);
+  console.log(`  Config  : ${CLAUDE_CONFIG}`);
+  console.log(`  Backup  : ${CLAUDE_CONFIG}.bak`);
+  console.log(`  Server  : ${SERVER_PATH}`);
+  console.log(`  Tenant  : ${tenantId}`);
+  console.log(`  Base URL: ${baseUrl}`);
+  console.log(`  POC URL : ${pocUrl}`);
   console.log(`\n  Next steps:`);
-  console.log(`  1. Restart Claude Desktop  (Cmd+Q / close fully → reopen)`);
+  console.log(`  1. Restart Claude Desktop  (Cmd+Q → reopen)`);
   console.log(`  2. Ask Claude: "Authenticate with Workday"`);
   console.log(`  3. Sign in with your Workday credentials in the browser\n`);
 

@@ -1,0 +1,41 @@
+{
+  "name": "workday-mcp-server",
+  "version": "0.1.0-poc",
+  "description": "Workday MCP Server — OAuth 2.0 PKCE + Model Context Protocol for Claude Desktop. Proof of concept for any Workday tenant.",
+  "main": "server.mjs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gkchaitanya1503/workday-oauth-poc.git"
+  },
+  "keywords": [
+    "workday",
+    "mcp",
+    "model-context-protocol",
+    "oauth",
+    "pkce",
+    "claude-desktop",
+    "hcm",
+    "anthropic"
+  ],
+  "scripts": {
+    "start":   "pm2 start ecosystem.config.cjs && pm2 save",
+    "stop":    "pm2 stop workday-mcp",
+    "restart": "pm2 startOrRestart ecosystem.config.cjs && pm2 save",
+    "reload":  "git pull && npm install --silent && pm2 startOrRestart ecosystem.config.cjs && pm2 save",
+    "logs":    "pm2 logs workday-mcp --lines 50",
+    "status":  "pm2 status",
+    "dev":     "node server.mjs",
+    "mcp":     "node mcp-server.mjs",
+    "demo-warmup":  "node scripts/demo-warmup.mjs",
+    "lint":    "node --check server.mjs && node --check mcp-server.mjs && node --check poc.js && node --check setup.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.2",
+    "axios": "^1.6.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.22.1",
+    "open": "^8.4.2",
+    "zod": "^3.22.0"
+  }
+}
